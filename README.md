@@ -4,11 +4,10 @@ Pipeline ETL completo implementado en **Azure Databricks** con arquitectura **Me
 
 ## Arquitectura
 
-```
 Azure ADLS Gen2 (raw)
        │
        ▼
-  [Bronze Layer]          ← Ingesta cruda desde CSV y API
+  [Bronze Layer]          ← Ingesta cruda desde CSV y API (DOS FUENTES)
   base_produccion_brz
   base_producto_brz
   base_tiendas_brz
@@ -24,7 +23,6 @@ Azure ADLS Gen2 (raw)
   [Gold Layer]            ← Métricas de negocio y analítica
   semantic_layer_gld
   flujo_analitico_mensual_gld
-```
 
 ## Tecnologías
 
@@ -46,7 +44,7 @@ Azure ADLS Gen2 (raw)
 
 ## Estructura del repositorio
 
-```
+
 ├── proceso/                  # Notebooks ETL (PySpark)
 │   ├── ing2brz_Produccion.ipynb
 │   ├── Ing2brz_Producto.ipynb
@@ -65,14 +63,14 @@ Azure ADLS Gen2 (raw)
 │   └── workflows/
 │       └── ci_cd.yml         # CI/CD GitHub Actions
 └── README.md
-```
+
 
 ## Ejecución
 
-1. Subir archivos CSV al contenedor `raw` en Azure (ADLS Gen2)
+1. Subir archivos CSV al contenedor raw en Azure (ADLS Gen2)
 2. Ejecutar el job **Generación de Reportes** en Lakeflow Jobs
 3. El pipeline detecta automáticamente los archivos y procesa el mes correspondiente
 
 ## Seguridad
 
-La conexión a Azure ADLS Gen2 usa exclusivamente **Managed Identity** (System-Assigned) a través del Access Connector `ac-smartdata`, sin credenciales expuestas en el código.
+La conexión a Azure ADLS Gen2 usa exclusivamente Managed Identity (System-Assigned) a través del Access Connector ac-smartdata, sin credenciales expuestas en el código.
