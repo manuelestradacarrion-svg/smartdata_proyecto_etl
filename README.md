@@ -47,21 +47,37 @@ Azure ADLS Gen2 (raw)
 
 proceso/                  # Notebooks ETL (PySpark)
 ing2brz_Produccion.ipynb
+
 Ing2brz_Producto.ipynb
+
 Ing2brz_Tienda.ipynb
+
 str_slv_tipoCambioBCRP.ipynb
+
 str_slv_Producto.ipynb
+
 str_slv_Tienda.ipynb
+
 str_slv_Quality_layer.ipynb
+
 str_gld_Semantic_layer.ipynb
+
 str_gld_Analityc_layer.ipynb
+
 PrepAmb/                  # Scripts de preparación de ambiente
+
  preparacion_ambiente.sql
+ 
 reversion/                # Scripts de reversión (DROP)
+
  reversion_tablas.sql
+ 
 github/
+
 workflows/
+
 ci_cd.yml         # CI/CD GitHub Actions
+
 README.md
 
 
