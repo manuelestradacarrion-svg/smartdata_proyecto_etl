@@ -41,31 +41,12 @@ jobs:
     needs: validate
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Trigger job Generacion de Reportes
+      - uses: databricks/setup-cli@main
+      - name: Ejecutar job Generacion de Reportes
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          echo "Iniciando job ETL en Databricks..."
-          RESPONSE=$(curl -s -X POST \
-            "${DATABRICKS_HOST}/api/2.1/jobs/runs/now" \
-            -H "Authorization: Bearer ${DATABRICKS_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d '{"job_id": 563928334176336}')
-          echo "Respuesta API: $RESPONSE"
-          RUN_ID=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['run_id'])")
-          echo "Job iniciado - Run ID: $RUN_ID"
-          for i in $(seq 1 30); do
-            sleep 30
-            STATE=$(curl -s "${DATABRICKS_HOST}/api/2.1/jobs/runs/get?run_id=${RUN_ID}" \
-              -H "Authorization: Bearer ${DATABRICKS_TOKEN}")
-            STATUS=$(echo "$STATE" | python3 -c "import sys,json; print(json.load(sys.stdin)['state']['life_cycle_state'])")
-            echo "Estado [$i/30]: $STATUS"
-            if [ "$STATUS" = "TERMINATED" ] || [ "$STATUS" = "INTERNAL_ERROR" ]; then
-              RESULT=$(echo "$STATE" | python3 -c "import sys,json; print(json.load(sys.stdin)['state']['result_state'])")
-              echo "Resultado: $RESULT"
-              if [ "$RESULT" = "SUCCESS" ]; then echo "Pipeline exitoso"; exit 0
-              else echo "Pipeline fallo: $RESULT"; exit 1; fi
-            fi
-          done
-          echo "Timeout superado"; exit 1
+          echo "Lanzando job en Databricks..."
+          databricks jobs run-now --job-id 563928334176336
+          echo "Job lanzado exitosamente"
