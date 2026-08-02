@@ -6,7 +6,7 @@ Archivos del reporte de ventas desarrollado en Power BI.
 
 | Archivo | Descripción |
 |---|---|
-| `Reporte_ventas_final_smartdata.pbix` | Archivo Power BI Desktop con el reporte completo |
+| `Reporte ventas final smartdata.pbix` | Archivo Power BI Desktop con el reporte completo |
 | `DASHBOARD1` | Captura página 1 del reporte (KPIs y gráficos) |
 | `DASHBOARD2` | Captura página 2 del reporte |
 
