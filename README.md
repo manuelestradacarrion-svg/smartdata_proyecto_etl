@@ -5,23 +5,30 @@ Pipeline ETL completo implementado en **Azure Databricks** con arquitectura **Me
 ## Arquitectura
 
 Azure ADLS Gen2 (raw)
-       │
-       ▼
+
   [Bronze Layer]          ← Ingesta cruda desde CSV y API (DOS FUENTES)
+  
   base_produccion_brz
+  
   base_producto_brz
+  
   base_tiendas_brz
-       │
-       ▼
+  
+  
   [Silver Layer]          ← Calidad, limpieza y validaciones
+  
   quality_layer_slv
+  
   base_producto_slv
+  
   base_tiendas_slv
+  
   tipo_cambio_bcrp_slv
-       │
-       ▼
+  
   [Gold Layer]            ← Métricas de negocio y analítica
+  
   semantic_layer_gld
+  
   flujo_analitico_mensual_gld
 
 ## Tecnologías
