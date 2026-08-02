@@ -35,26 +35,10 @@ jobs:
           print('Todos los notebooks son validos')
           "
 
-  deploy:
-    name: Deploy notebooks a Databricks
-    runs-on: ubuntu-latest
-    needs: validate
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v3
-      - uses: databricks/setup-cli@main
-      - name: Desplegar notebooks a produccion
-        env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-        run: |
-          databricks workspace import-dir proceso/ /Shared/smartdata_proyecto_etl --overwrite
-          echo "Notebooks desplegados correctamente"
-
   run_pipeline:
     name: Ejecutar Job ETL en produccion
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: validate
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Trigger job Generacion de Reportes
