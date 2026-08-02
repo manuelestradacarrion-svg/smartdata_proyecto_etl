@@ -42,13 +42,13 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
-      - run: pip install databricks-cli
+      - uses: databricks/setup-cli@main
       - name: Desplegar notebooks a produccion
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          databricks workspace import_dir proceso/ /Shared/smartdata_proyecto_etl --overwrite
+          databricks workspace import-dir proceso/ /Shared/smartdata_proyecto_etl --overwrite
           echo "Notebooks desplegados correctamente"
 
   run_pipeline:
@@ -69,8 +69,6 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"job_id": 563928334176336}' | python3 -c "import sys,json; print(json.load(sys.stdin)['run_id'])")
           echo "Job iniciado - Run ID: $RUN_ID"
-
-          echo "Esperando resultado..."
           for i in $(seq 1 30); do
             sleep 30
             STATUS=$(curl -s "$DATABRICKS_HOST/api/2.1/jobs/runs/get?run_id=$RUN_ID" \
@@ -80,14 +78,8 @@ jobs:
               RESULT=$(curl -s "$DATABRICKS_HOST/api/2.1/jobs/runs/get?run_id=$RUN_ID" \
                 -H "Authorization: Bearer $DATABRICKS_TOKEN" | python3 -c "import sys,json; print(json.load(sys.stdin)['state']['result_state'])")
               echo "Resultado: $RESULT"
-              if [ "$RESULT" = "SUCCESS" ]; then
-                echo "Pipeline ETL ejecutado exitosamente"
-                exit 0
-              else
-                echo "El pipeline fallo: $RESULT"
-                exit 1
-              fi
+              if [ "$RESULT" = "SUCCESS" ]; then echo "Pipeline exitoso"; exit 0
+              else echo "Pipeline fallo: $RESULT"; exit 1; fi
             fi
           done
-          echo "Timeout superado"
-          exit 1
+          echo "Timeout superado"; exit 1
