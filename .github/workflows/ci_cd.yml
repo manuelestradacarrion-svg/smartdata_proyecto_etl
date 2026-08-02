@@ -1,0 +1,40 @@
+name: CI/CD - Smart Data ETL Pipeline
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    name: Validar notebooks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip install nbformat
+      - name: Validar notebooks
+        run: |
+          python -c "
+          import nbformat,glob,os,sys
+          nbs=glob.glob('proceso/*.ipynb')
+          [print('OK',os.path.basename(p)) for p in nbs if nbformat.read(open(p),4)]
+          print('Todos los notebooks son validos')
+          "
+
+  deploy:
+    name: Deploy a Databricks
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      - run: pip install databricks-cli
+      - name: Deploy
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: databricks workspace import_dir proceso/ /Shared/smartdata_proyecto_etl --overwrite
